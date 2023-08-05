@@ -1,11 +1,29 @@
 from django.db import models
+from django.utils import dates
 
-# Create your models here.
+
+class GenderChoices(models.TextChoices):
+    MALE = 'M', 'Male'
+    FEMALE = 'F', 'Female'
+    OTHER = 'O', 'Other'
 
 
 class Employee(models.Model):
-    employee_id = models.IntegerField(primary_key=True)
     first_name = models.CharField(max_length=30, blank=False, null=False)
     last_name = models.CharField(max_length=30, blank=False, null=False)
     email_address = models.EmailField(blank=False, null=False, unique=True)
+    gender = models.CharField(max_length=1, choices=GenderChoices.choices, default=GenderChoices.OTHER)
 
+    def __str__(self):
+        return str(self.email_address)
+
+
+class EmployeeEvents(models.Model):
+    employee = models.ForeignKey(to=Employee, on_delete=models.CASCADE)
+    event_type = models.CharField(max_length=10, blank=False, null=False)
+    event_date = models.DateField(blank=False, null=False)
+    event_month = models.IntegerField(choices=dates.MONTHS.items(), blank=True, null=True)
+
+    @classmethod
+    def get_data_by_month(cls, month):
+        return cls.objects.filter(event_month=month)
