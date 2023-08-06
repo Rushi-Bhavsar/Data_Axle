@@ -1,6 +1,8 @@
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from rest_framework import viewsets, status
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from email_delivery.utils.decorator_utils import CatchException
@@ -15,6 +17,8 @@ class EmployeeViewSet(viewsets.ModelViewSet):
     queryset = Employee.objects.all()
     serializer_class = EmployeeSerializer
     http_method_names = ['get', 'post', 'patch']
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
 
 
 @method_decorator(CatchException, name='update')
@@ -24,6 +28,9 @@ class EmployeeEventsViewSet(viewsets.ModelViewSet):
     queryset = EmployeeEvents.objects.all()
     serializer_class = EmployeeEventsSerializer
     http_method_names = ['get', 'post', 'patch']
+
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
 
     def create(self, request, *args, **kwargs):
         event_date = self.request.data['event_date']

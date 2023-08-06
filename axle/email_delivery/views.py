@@ -3,16 +3,21 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.http import JsonResponse
 from django.utils.decorators import method_decorator
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.views import APIView
 from django.utils import timezone
 from .models import EmployeeEventEmailHistory
 from employee_data.models import EmployeeEvents
 from .utils.core_util import create_template_data
 from .utils.decorator_utils import CatchException
+from rest_framework.permissions import IsAuthenticated
 
 
 @method_decorator(CatchException, name='get')
 class SendEventEmails(APIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated, )
+
     def get(self, request, *args, **kwargs):
         resp_dict = {}
         today_date = timezone.now().date()
