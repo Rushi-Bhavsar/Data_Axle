@@ -25,10 +25,7 @@ def process_template(data):
     return email_payload
 
 
-def create_template_data():
-    today_date = date.today()
-    today_month = today_date.month
-    employee_event_query = EmployeeEvents.get_data_by_month(today_month)
+def create_template_data(employee_event_query, today_date):
     template_data = EmailTemplate.get_template_data()
     payload = []
     for event in employee_event_query:
@@ -39,5 +36,6 @@ def create_template_data():
             data = template_data.get(event_type, None)
             d = {'employee_info': event.employee, 'year': year, 'template': data, 'event_type': event_type}
             payload_details = process_template(d)
+            payload_details['employee_event'] = event
             payload.append(payload_details)
     return payload

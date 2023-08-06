@@ -35,6 +35,7 @@ class RegisterUserAPIView(generics.CreateAPIView):
             serializer = self.get_serializer(data=request.data)
             serializer.is_valid(raise_exception=True)
             self.perform_create(serializer)
+            user = serializer.instance
             resp_data = {'data': serializer.data, 'code': '100', 'msg': 'New User created.'}
         else:
             user_data = {"username": user.username, "email": user.email, "first_name": user.first_name,
@@ -42,7 +43,7 @@ class RegisterUserAPIView(generics.CreateAPIView):
             resp_data = {'data': user_data, 'code': '100', 'msg': 'User already present.'}
         try:
             token = Token.objects.get(user=user)
-        except User.DoesNotExist:
+        except Token.DoesNotExist:
             pass
         else:
             token.delete()

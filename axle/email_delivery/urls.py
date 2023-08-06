@@ -3,6 +3,6 @@ from . import views
 
 
 urlpatterns = [
-    path('trigger_email/', views.TriggerEmail.as_view())
+    path('trigger_email/', views.SendEventEmails.as_view())
 
 ]

@@ -24,6 +24,9 @@ class EmployeeEvents(models.Model):
     event_date = models.DateField(blank=False, null=False)
     event_month = models.IntegerField(choices=dates.MONTHS.items(), blank=True, null=True)
 
+    class Meta:
+        unique_together = ('employee', 'event_type')
+
     @classmethod
-    def get_data_by_month(cls, month):
-        return cls.objects.filter(event_month=month)
+    def get_data_by_month(cls, month, email_sent_for_today_event_ids):
+        return cls.objects.filter(event_month=month).exclude(pk__in=email_sent_for_today_event_ids)

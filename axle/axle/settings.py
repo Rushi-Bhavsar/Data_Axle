@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -122,8 +122,83 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
+MEDIA_URL = 'media/'
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOG_LEVEL = "DEBUG"
+
+APP_LOG_FILE = os.path.join(BASE_DIR, 'axle', 'application_logs.log')
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        },
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+        "request_id": {
+            "()": "log_request_id.filters.RequestIDFilter"
+        }
+    },
+    'formatters': {
+        "verbose": {
+            "format": "%(asctime)s.%(msecs)03d | %(thread)d | %(levelname)s | %(module)s | %(name)s | %(request_id)s "
+                      "| %(message)s",
+            "datefmt": '%Y-%m-%dT%H:%M:%S',
+        }
+    },
+
+    'handlers': {
+        'console': {
+            'level': LOG_LEVEL,
+            'filters': ['request_id', 'require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose'
+        },
+
+        'app_file': {
+            'level': LOG_LEVEL,
+            'filters': ['request_id'],
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': APP_LOG_FILE,
+            'maxBytes': 16777216,
+            'formatter': 'verbose',
+            'backupCount': 200,
+        },
+    },
+
+    'loggers': {
+        # 'django.db.backends': {
+        #     'level': LOG_LEVEL,
+        #     'handlers': ['console'],
+        #  },
+
+        '': {
+            'handlers': ['app_file'],
+            'level': LOG_LEVEL,
+        },
+
+        'weather': {
+            'handlers': ['app_file'],
+            'level': LOG_LEVEL,
+        },
+    }
+}
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'rushi.bhavsar.57@gmail.com'
+EMAIL_HOST_PASSWORD = 'hblnlxtporvnpyts'
+EMAIL_USE_TLS = True
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
