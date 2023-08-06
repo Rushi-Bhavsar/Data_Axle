@@ -13,12 +13,21 @@ def calculate_date_difference(from_date, to_data):
         return False, years
 
 
+def add_number_suffix(number):
+    if 10 <= number % 100 <= 20:
+        suffix = 'th'
+    else:
+        suffix = {1: 'st', 2: 'nd', 3: 'rd'}.get(number % 10, 'th')
+    return f"{number}{suffix}"
+
+
 def process_template(data):
     email_payload = {'to_email': data['employee_info'].email_address, 'Email_Subject': '', 'Email_Body': ''}
     employee_full_name = f"{data['employee_info'].first_name} {data['employee_info'].last_name}"
     template = data['template']
     template = template.replace('{employee_name}', employee_full_name)
-    template = template.replace('{year}', str(data['year']))
+    year = add_number_suffix(str(data['year']))
+    template = template.replace('{year}', year)
     subject = f"Happy {data['event_type']}"
     email_payload['Email_Body'] = template
     email_payload['Email_Subject'] = subject

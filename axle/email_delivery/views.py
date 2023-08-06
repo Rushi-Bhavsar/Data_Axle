@@ -42,10 +42,11 @@ class SendEventEmails(APIView):
                 customer_event = payload['employee_event']
                 send_mail(
                     subject=subject,
-                    message=body,
+                    message="",
                     from_email=settings.EMAIL_HOST_USER,
                     recipient_list=[to_email],
                     fail_silently=False,
+                    html_message=body,
                 )
 
                 EmployeeEventEmailHistory.objects.create(employee_event=customer_event, email_status='S',
