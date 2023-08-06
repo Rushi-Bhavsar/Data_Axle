@@ -26,7 +26,7 @@ def process_template(data):
     employee_full_name = f"{data['employee_info'].first_name} {data['employee_info'].last_name}"
     template = data['template']
     template = template.replace('{employee_name}', employee_full_name)
-    year = add_number_suffix(str(data['year']))
+    year = add_number_suffix(data['year'])
     template = template.replace('{year}', year)
     subject = f"Happy {data['event_type']}"
     email_payload['Email_Body'] = template
